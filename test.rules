@@ -1,0 +1,12 @@
+#  ___ ____  ____  _   ___        ___  ______      ____  ____ _____ 
+# |_ _|  _ \/ ___|| | | \ \      / / |/ /___ \    |___ \|___ \___  |
+#  | || | | \___ \| |_| |\ \ /\ / /| ' /  __) |____ __) | __) | / / 
+#  | || |_| |___) |  _  | \ V  V / | . \ / __/_____/ __/ / __/ / /  
+# |___|____/|____/|_| |_|  \_/\_/  |_|\_\_____|   |_____|_____/_/                                                                    
+#if snort see two packets in a TCP flow with
+# first packet has "login" or "Initial" in payload,destination port is 3399
+# and second packet has a "IPv4Address:Port" srting (E.g.123.45.6.7:8000) in payload.destination port is 3399;
+# output a alert with msg "bot founded" and sid 1000001
+
+alert tcp any any -> any 3399 (pcre:"/login|Initial/";flowbits:set,logged_in;flowbits:noalert;sid:1000001;)
+alert tcp any any -> any 3399 (msg:"bot founded";pcre:"/(([\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d{2}|2[0-4]\d|25[0-5]):\d+/";flowbits:isset,logged_in;sid:1000001)
